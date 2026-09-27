@@ -1,0 +1,1356 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Báo Cáo Đường Dây Nóng Lừa Đảo – Xã Trà Liên</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js for Statistics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        police: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            600: '#1d4ed8',
+                            700: '#1e40af',
+                            800: '#1e3a8a',
+                            900: '#0f172a'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&display=swap');
+        body {
+            font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .pulse-subtle {
+            animation: pulse-border 2s infinite;
+        }
+        @keyframes pulse-border {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.6); }
+            50% { box-shadow: 0 0 0 12px rgba(220, 38, 38, 0); }
+        }
+        .modal-active {
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen pb-24 select-none">
+    <div id="app" class="max-w-md mx-auto min-h-screen bg-slate-900 shadow-2xl relative flex flex-col">
+        <!-- APP HEADER -->
+        <header class="bg-gradient-to-r from-police-800 to-police-900 border-b border-police-700 px-4 py-3 sticky top-0 z-30 flex items-center justify-between shadow-md">
+            <div class="flex items-center gap-2.5">
+                <div class="w-10 h-10 rounded-full bg-red-600 flex items-center justify-center text-xl shadow-lg border-2 border-red-400">
+                    👮
+                </div>
+                <div>
+                    <h1 id="headerUnitName" class="font-bold text-sm text-white tracking-wide leading-tight">CÔNG AN XÃ TRÀ LIÊN</h1>
+                    <p class="text-xs text-blue-200">Đường dây nóng phòng chống lừa đảo</p>
+                </div>
+            </div>
+            <button onclick="openAdminModal()" class="px-2.5 py-1 text-xs font-semibold bg-police-700 hover:bg-police-600 text-white rounded-lg border border-blue-400/30 flex items-center gap-1 transition">
+                <i data-lucide="shield" class="w-3.5 h-3.5"></i>
+                <span id="adminBtnText">Cán bộ</span>
+            </button>
+        </header>
+
+        <!-- NAVIGATION TABS -->
+        <nav class="bg-slate-800/90 backdrop-blur border-b border-slate-700 flex text-xs font-semibold px-2 py-1 sticky top-[57px] z-20">
+            <button onclick="switchTab('home')" id="tab-home" class="flex-1 py-2 rounded-lg text-center transition flex items-center justify-center gap-1.5 text-white bg-blue-600 shadow">
+                <i data-lucide="home" class="w-4 h-4"></i> Trang chủ
+            </button>
+            <button onclick="switchTab('report')" id="tab-report" class="flex-1 py-2 rounded-lg text-center transition flex items-center justify-center gap-1.5 text-slate-400 hover:text-white">
+                <i data-lucide="alert-octagon" class="w-4 h-4"></i> Báo cáo
+            </button>
+            <button onclick="switchTab('guide')" id="tab-guide" class="flex-1 py-2 rounded-lg text-center transition flex items-center justify-center gap-1.5 text-slate-400 hover:text-white">
+                <i data-lucide="shield-alert" class="w-4 h-4"></i> Dấu hiệu
+            </button>
+            <button onclick="switchTab('history')" id="tab-history" class="flex-1 py-2 rounded-lg text-center transition flex items-center justify-center gap-1.5 text-slate-400 hover:text-white">
+                <i data-lucide="search" class="w-4 h-4"></i> Tra cứu
+            </button>
+        </nav>
+
+        <!-- MAIN VIEW CONTAINER -->
+        <main class="flex-1 p-4">
+            <!-- TAB 1: HOME -->
+            <div id="view-home" class="space-y-4">
+                <!-- HERO ALERT BANNER -->
+                <div class="bg-gradient-to-br from-red-600 via-red-700 to-rose-800 rounded-2xl p-4 shadow-xl border border-red-400/40 text-center relative overflow-hidden">
+                    <div class="absolute -right-4 -bottom-4 text-7xl opacity-20 pointer-events-none">🚨</div>
+                    <span class="inline-block bg-white/20 text-white font-extrabold text-xs px-3 py-1 rounded-full uppercase tracking-wider mb-2">Thông báo chính thức</span>
+                    <h2 class="text-2xl font-black text-white leading-tight uppercase">🚨 BÁO CÁO LỪA ĐẢO</h2>
+                    <p class="text-red-100 text-sm mt-1 font-medium">“Phát hiện lừa đảo – Báo ngay Công an xã”</p>
+                    
+                    <!-- VOICE ASSISTANT BUTTON -->
+                    <div class="mt-3 flex justify-center">
+                        <button onclick="toggleVoiceGuide()" id="voiceBtn" class="bg-yellow-400 hover:bg-yellow-300 text-slate-900 font-bold px-4 py-2 rounded-full text-xs flex items-center gap-2 shadow-lg transition active:scale-95">
+                            <i data-lucide="volume-2" class="w-4 h-4"></i>
+                            <span id="voiceBtnText">🔊 Bấm để nghe hướng dẫn bằng giọng nói</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- MAIN CTA: RED REPORT BUTTON -->
+                <div class="text-center">
+                    <button onclick="switchTab('report')" class="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 active:scale-[0.98] text-white font-black text-xl py-5 px-6 rounded-2xl shadow-2xl transition duration-150 border-4 border-red-400/80 pulse-subtle flex flex-col items-center justify-center gap-1">
+                        <span class="text-3xl">🔴</span>
+                        <span class="tracking-wide text-2xl">BÁO CÁO NGAY</span>
+                        <span class="text-xs font-normal text-red-100">Bấm vào đây để gửi tin báo đến Công an xã</span>
+                    </button>
+                </div>
+
+                <!-- DIRECT CALL ACTION -->
+                <a id="homeCallBtn" href="tel:0914000000" class="block w-full bg-white hover:bg-slate-100 active:bg-slate-200 text-police-900 font-black text-lg py-4 px-5 rounded-2xl text-center shadow-lg transition border-2 border-blue-400">
+                    <div class="flex items-center justify-center gap-3">
+                        <span class="text-2xl">☎️</span>
+                        <div class="text-left">
+                            <p class="text-xs font-bold text-slate-500 uppercase leading-none">Khẩn cấp - Bấm gọi trực tiếp</p>
+                            <p class="text-xl font-black text-red-600 leading-tight">GỌI CÔNG AN XÃ: <span id="homeHotlineNum">0914.000.000</span></p>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- 4 QUICK FEATURE CARDS -->
+                <div class="grid grid-cols-2 gap-3">
+                    <button onclick="switchTab('report')" class="bg-slate-800/80 hover:bg-slate-800 border border-slate-700 p-3.5 rounded-xl text-left transition flex flex-col justify-between h-28 group">
+                        <span class="text-2xl">📱</span>
+                        <div>
+                            <p class="font-bold text-sm text-white group-hover:text-blue-400 transition">Gửi báo cáo</p>
+                            <p class="text-[11px] text-slate-400">Biểu mẫu trực tuyến</p>
+                        </div>
+                    </button>
+
+                    <button onclick="switchTab('guide')" class="bg-slate-800/80 hover:bg-slate-800 border border-slate-700 p-3.5 rounded-xl text-left transition flex flex-col justify-between h-28 group">
+                        <span class="text-2xl">⚠️</span>
+                        <div>
+                            <p class="font-bold text-sm text-white group-hover:text-amber-400 transition">Dấu hiệu lừa đảo</p>
+                            <p class="text-[11px] text-slate-400">7 thủ đoạn phổ biến</p>
+                        </div>
+                    </button>
+
+                    <button onclick="switchTab('guide')" class="bg-slate-800/80 hover:bg-slate-800 border border-slate-700 p-3.5 rounded-xl text-left transition flex flex-col justify-between h-28 group">
+                        <span class="text-2xl">🛡️</span>
+                        <div>
+                            <p class="font-bold text-sm text-white group-hover:text-green-400 transition">Tự bảo vệ</p>
+                            <p class="text-[11px] text-slate-400">Nguyên tắc an toàn</p>
+                        </div>
+                    </button>
+
+                    <a id="homeQuickCall" href="tel:0914000000" class="bg-red-950/40 hover:bg-red-950/60 border border-red-600/50 p-3.5 rounded-xl text-left transition flex flex-col justify-between h-28 group">
+                        <span class="text-2xl">☎️</span>
+                        <div>
+                            <p class="font-bold text-sm text-red-300 group-hover:text-red-200 transition">Hotline 24/7</p>
+                            <p class="text-[11px] text-red-400">Trực ban Công an</p>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- IMPORTANT SAFETY NOTICE -->
+                <div class="bg-blue-950/50 border border-blue-700/50 rounded-2xl p-4 text-xs space-y-2 text-slate-300">
+                    <p class="font-bold text-blue-300 flex items-center gap-1.5 text-sm">
+                        <i data-lucide="info" class="w-4 h-4 text-blue-400"></i> LƯU Ý ĐẶC BIỆT DÀNH CHO BÀ CON:
+                    </p>
+                    <p>• <strong>CÔNG AN KHÔNG BAO GIỜ</strong> yêu cầu người dân chuyển tiền vào tài khoản để "phục vụ điều tra" hay "xác minh".</p>
+                    <p>• Tuyệt đối <strong>KHÔNG CUNG CẤP MÃ OTP</strong> cho bất cứ ai.</p>
+                    <p>• Khi bị đe dọa, giữ bình tĩnh, <strong>KHÔNG CHUYỂN TIỀN</strong> và báo ngay Công an xã.</p>
+                </div>
+            </div>
+
+            <!-- TAB 2: REPORT FORM -->
+            <div id="view-report" class="hidden space-y-4">
+                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-4">
+                    <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                        <span class="text-red-500">📝</span> BIỂU MẪU BÁO CÁO LỪA ĐẢO
+                    </h3>
+                    <p class="text-xs text-slate-400 mt-1">Thông tin sẽ được mã hóa và chuyển thẳng tới trực ban Công an xã Trà Liên.</p>
+                </div>
+
+                <form id="fraudReportForm" onsubmit="handleFormSubmit(event)" class="space-y-4">
+                    <!-- SECTION A: REPORTER INFO -->
+                    <div class="bg-slate-800/90 border border-slate-700 rounded-2xl p-4 space-y-3">
+                        <div class="flex items-center justify-between border-b border-slate-700 pb-2">
+                            <h4 class="font-bold text-sm text-blue-400 uppercase tracking-wide">A. Thông tin người báo cáo</h4>
+                            <span class="text-[11px] text-slate-400">Phần 1/2</span>
+                        </div>
+
+                        <!-- ANONYMOUS CHECKBOX -->
+                        <div class="bg-slate-700/40 p-3 rounded-xl border border-slate-600/50 flex items-center justify-between">
+                            <div>
+                                <label for="isAnonymous" class="font-bold text-sm text-white cursor-pointer">Tôi muốn báo cáo ẩn danh</label>
+                                <p class="text-[11px] text-slate-400">Không bắt buộc cung cấp tên & số điện thoại</p>
+                            </div>
+                            <input type="checkbox" id="isAnonymous" onchange="toggleAnonymousMode()" class="w-5 h-5 rounded text-blue-600 focus:ring-blue-500 cursor-pointer">
+                        </div>
+
+                        <div id="reporterPersonalFields" class="space-y-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-1">Họ và tên người báo <span class="text-red-400">*</span></label>
+                                <input type="text" id="reporterName" placeholder="Ví dụ: Nguyễn Văn A" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-slate-500 focus:border-blue-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-1">Số điện thoại liên hệ <span class="text-red-400">*</span></label>
+                                <input type="tel" id="reporterPhone" placeholder="Ví dụ: 0912 345 678" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-slate-500 focus:border-blue-500 outline-none">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">Thôn / Khu dân cư tại xã Trà Liên</label>
+                            <select id="reporterVillage" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white focus:border-blue-500 outline-none">
+                                <option value="">-- Chọn thôn (nếu biết) --</option>
+                                <option value="Thôn 1">Thôn 1</option>
+                                <option value="Thôn 2">Thôn 2</option>
+                                <option value="Thôn 3">Thôn 3</option>
+                                <option value="Thôn 4">Thôn 4</option>
+                                <option value="Thôn 5">Thôn 5</option>
+                                <option value="Thôn 6">Thôn 6</option>
+                                <option value="Thôn 7">Thôn 7</option>
+                                <option value="Thôn 8">Thôn 8</option>
+                                <option value="Khu dân cư khác">Khu dân cư khác ngoài xã</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- SECTION B: INCIDENT DETAILS -->
+                    <div class="bg-slate-800/90 border border-slate-700 rounded-2xl p-4 space-y-3">
+                        <div class="flex items-center justify-between border-b border-slate-700 pb-2">
+                            <h4 class="font-bold text-sm text-red-400 uppercase tracking-wide">B. Nội dung vụ việc</h4>
+                            <span class="text-[11px] text-slate-400">Phần 2/2</span>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">Hình thức lừa đảo <span class="text-red-400">*</span></label>
+                            <select id="fraudType" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white focus:border-red-500 outline-none">
+                                <option value="">-- Bấm để chọn loại lừa đảo --</option>
+                                <option value="Lừa đảo qua điện thoại">📞 Lừa đảo qua điện thoại</option>
+                                <option value="Lừa đảo qua Facebook/Zalo">💬 Lừa đảo qua Facebook/Zalo</option>
+                                <option value="Lừa đảo qua tin nhắn">✉️ Lừa đảo qua tin nhắn SMS</option>
+                                <option value="Lừa đảo chuyển khoản">🏦 Lừa đảo chuyển khoản ngân hàng</option>
+                                <option value="Giả danh Công an/cơ quan nhà nước">👮 Giả danh Công an / Viện kiểm sát / Tòa án</option>
+                                <option value="Lừa đảo việc làm">💼 Lừa đảo tuyển dụng việc làm online</option>
+                                <option value="Lừa đảo mua bán hàng online">🛒 Lừa đảo mua bán hàng online</option>
+                                <option value="Lừa đảo đầu tư">📈 Lừa đảo đầu tư tài chính / sàn ảo</option>
+                                <option value="Chiếm đoạt tài khoản">🔓 Chiếm đoạt tài khoản mạng xã hội</option>
+                                <option value="Khác">❓ Hình thức lừa đảo khác</option>
+                            </select>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-1">Thời gian xảy ra</label>
+                                <input type="datetime-local" id="incidentTime" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-2.5 text-xs text-white outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-1">Số tiền bị yêu cầu/mất (VNĐ)</label>
+                                <input type="number" id="amountInvolved" placeholder="Ví dụ: 10000000" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white placeholder-slate-500 outline-none">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">Số điện thoại / Nick nghi vấn</label>
+                            <input type="text" id="suspectPhone" placeholder="SĐT gọi đến hoặc tên tài khoản nghi vấn" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-slate-500 outline-none">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">Tài khoản ngân hàng nhận tiền của kẻ lừa đảo</label>
+                            <input type="text" id="suspectBankAccount" placeholder="Số tài khoản - Tên ngân hàng - Tên chủ tài khoản" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-slate-500 outline-none">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">Đường link Facebook/Zalo/Website nghi vấn</label>
+                            <input type="url" id="suspectLinks" placeholder="https://..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-slate-500 outline-none">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">Nội dung chi tiết vụ việc <span class="text-red-400">*</span></label>
+                            <textarea id="description" required rows="4" placeholder="Mô tả cụ thể những gì kẻ lừa đảo đã nói, đã làm hoặc hướng dẫn bạn..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-slate-500 outline-none resize-none"></textarea>
+                        </div>
+
+                        <!-- FILE EVIDENCE UPLOAD -->
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">Hình ảnh, ảnh chụp tin nhắn, bằng chứng (Tối đa 5 ảnh)</label>
+                            <div class="border-2 border-dashed border-slate-700 hover:border-blue-500 rounded-xl p-3 text-center cursor-pointer relative bg-slate-900/50">
+                                <input type="file" id="evidenceFiles" accept="image/*" multiple onchange="handleEvidenceSelect(event)" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full">
+                                <i data-lucide="upload-cloud" class="w-7 h-7 mx-auto text-blue-400 mb-1"></i>
+                                <p class="text-xs font-medium text-slate-300">Bấm để tải ảnh chụp màn hình / bằng chứng</p>
+                                <p class="text-[10px] text-slate-500">Hỗ trợ JPG, PNG, WEBP (mỗi ảnh ≤ 10MB)</p>
+                            </div>
+                            <div id="evidencePreviewContainer" class="flex flex-wrap gap-2 mt-2"></div>
+                        </div>
+                    </div>
+
+                    <!-- DISCLAIMER WARNING -->
+                    <div class="bg-amber-950/40 border border-amber-600/40 rounded-xl p-3 text-xs text-amber-200">
+                        ⚠️ <strong>Cam kết:</strong> “Thông tin bạn cung cấp sẽ được chuyển đến đầu mối tiếp nhận của Công an xã Trà Liên để xem xét, xử lý theo quy định. Không cung cấp thông tin sai sự thật.”
+                    </div>
+
+                    <!-- SUBMIT BUTTON -->
+                    <button type="submit" id="submitReportBtn" class="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 active:scale-[0.98] text-white font-extrabold text-lg py-4 px-6 rounded-2xl shadow-xl transition flex items-center justify-center gap-2">
+                        <i data-lucide="send" class="w-5 h-5"></i>
+                        <span>🚨 GỬI BÁO CÁO ĐẾN CÔNG AN XÃ</span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- TAB 3: GUIDELINES -->
+            <div id="view-guide" class="hidden space-y-4">
+                <div class="bg-gradient-to-r from-police-800 to-slate-800 p-4 rounded-2xl border border-blue-500/30">
+                    <h3 class="text-base font-extrabold text-white flex items-center gap-2">
+                        <i data-lucide="shield-check" class="w-5 h-5 text-green-400"></i> CẨM NANG PHÒNG TRÁNH LỪA ĐẢO
+                    </h3>
+                    <p class="text-xs text-slate-300 mt-1">Dành riêng cho người dân xã Trà Liên nhận diện thủ đoạn tội phạm mạng.</p>
+                </div>
+
+                <div class="space-y-3" id="warningCardsList"></div>
+
+                <!-- SHARE SECTION -->
+                <div class="bg-slate-800/90 border border-slate-700 rounded-2xl p-4 text-center space-y-3">
+                    <p class="font-bold text-sm text-white">📤 CHIA SẺ CẢNH BÁO CHO NGƯỜI THÂN</p>
+                    <p class="text-xs text-slate-400">Lan tỏa thông tin giúp gia đình, hàng xóm không bị sập bẫy lừa đảo.</p>
+                    
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="shareSocial('facebook')" class="bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2.5 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 transition">
+                            <span>📘 Facebook</span>
+                        </button>
+                        <button onclick="shareSocial('zalo')" class="bg-cyan-600 hover:bg-cyan-500 text-white font-semibold py-2.5 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 transition">
+                            <span>💬 Zalo</span>
+                        </button>
+                    </div>
+                    <button onclick="copyWarningText()" class="w-full bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-2.5 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 transition border border-slate-600">
+                        <i data-lucide="copy" class="w-4 h-4"></i>
+                        <span id="copyBtnText">Sao chép nội dung cảnh báo</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- TAB 4: SEARCH REPORT CODE -->
+            <div id="view-history" class="hidden space-y-4">
+                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-4">
+                    <h3 class="text-base font-bold text-white flex items-center gap-2">
+                        <i data-lucide="search" class="w-5 h-5 text-blue-400"></i> TRA CỨU TIẾN ĐỘ BÁO CÁO
+                    </h3>
+                    <p class="text-xs text-slate-400 mt-1">Nhập mã định danh (Ví dụ: TL-2026xxxx) để xem kết quả tiếp nhận.</p>
+                    <div class="flex gap-2 mt-3">
+                        <input type="text" id="searchCodeInput" placeholder="Nhập mã báo cáo (TL-...)" class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white placeholder-slate-500 uppercase outline-none focus:border-blue-500">
+                        <button onclick="searchMyReport()" class="bg-blue-600 hover:bg-blue-500 text-white font-bold px-4 py-2 rounded-xl text-xs transition">Tra cứu</button>
+                    </div>
+                </div>
+                <div id="searchResultArea" class="space-y-3"></div>
+            </div>
+        </main>
+
+        <!-- FLOATING CALL BUTTON (SPEC REQUIREMENT #6) -->
+        <div class="fixed bottom-4 right-4 z-40">
+            <a id="floatingCallBtn" href="tel:0914000000" class="flex items-center gap-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 active:scale-95 text-white font-extrabold px-4 py-3 rounded-full shadow-2xl border-2 border-red-300 pulse-subtle transition">
+                <span class="text-xl">☎️</span>
+                <div class="text-left pr-1">
+                    <p class="text-[10px] uppercase font-semibold text-red-100 leading-none">Gọi khẩn cấp</p>
+                    <p class="text-sm font-black leading-tight text-white">CÔNG AN XÃ</p>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- MODAL 1: SUCCESS CONFIRMATION MODAL (SPEC REQUIREMENT #3) -->
+    <div id="successModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-800 border border-slate-700 rounded-3xl max-w-sm w-full p-6 text-center shadow-2xl relative">
+            <div class="w-16 h-16 bg-green-500/20 text-green-400 rounded-full flex items-center justify-center text-3xl mx-auto mb-3 border border-green-500/30">
+                ✅
+            </div>
+            <h3 class="text-xl font-black text-green-400 uppercase tracking-wide">BÁO CÁO ĐÃ ĐƯỢC TIẾP NHẬN</h3>
+            
+            <div class="bg-slate-900/80 rounded-2xl p-4 my-4 text-left text-xs space-y-2 border border-slate-700">
+                <div class="flex justify-between">
+                    <span class="text-slate-400">Mã báo cáo:</span>
+                    <span id="succReportCode" class="font-mono font-bold text-amber-400 text-sm">TL-XXXXXXXX</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-slate-400">Thời gian gửi:</span>
+                    <span id="succReportTime" class="font-semibold text-slate-200">--:-- --/--/----</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-slate-400">Trạng thái:</span>
+                    <span class="font-semibold text-blue-400 bg-blue-900/40 px-2 py-0.5 rounded-full border border-blue-500/30">🔵 Đã tiếp nhận</span>
+                </div>
+            </div>
+
+            <p class="text-xs text-amber-300 bg-amber-950/40 border border-amber-500/30 p-3 rounded-xl mb-4 font-medium">
+                ⚠️ Trong trường hợp khẩn cấp hoặc đang bị đe dọa mất tiền, hãy gọi trực tiếp Công an xã ngay!
+            </p>
+
+            <a id="succCallBtn" href="tel:0914000000" class="block w-full bg-red-600 hover:bg-red-500 active:scale-95 text-white font-extrabold py-3.5 px-4 rounded-xl text-sm mb-2 shadow-lg transition">
+                ☎️ GỌI CÔNG AN XÃ NGAY
+            </a>
+
+            <button onclick="closeSuccessModal()" class="w-full bg-slate-700 hover:bg-slate-600 text-slate-300 font-semibold py-2.5 px-4 rounded-xl text-xs transition">
+                Đóng thông báo
+            </button>
+        </div>
+    </div>
+
+    <!-- MODAL 2: POLICE ADMIN LOGIN & DASHBOARD (SPEC REQUIREMENT #4 & #5) -->
+    <div id="adminModal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-2 sm:p-4">
+        <div class="bg-slate-800 border border-slate-700 rounded-3xl w-full max-w-2xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden">
+            <!-- ADMIN HEADER -->
+            <div class="bg-police-900 border-b border-police-700 px-5 py-3.5 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <span class="text-xl">👮‍♂️</span>
+                    <div>
+                        <h3 class="font-bold text-sm text-white">QUẢN TRỊ – TIẾP NHẬN BÁO CÁO LỪA ĐẢO</h3>
+                        <p class="text-[11px] text-blue-300">Công an xã Trà Liên</p>
+                    </div>
+                </div>
+                <button onclick="closeAdminModal()" class="w-8 h-8 rounded-full bg-slate-700 hover:bg-slate-600 text-slate-300 flex items-center justify-center">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+
+            <!-- LOGIN VIEW (WHEN NOT LOGGED IN) -->
+            <div id="adminLoginForm" class="p-6 space-y-4 max-w-sm mx-auto my-auto w-full">
+                <div class="text-center mb-2">
+                    <div class="w-14 h-14 bg-police-700/50 text-blue-400 rounded-2xl flex items-center justify-center mx-auto mb-2 text-2xl border border-blue-500/30">
+                        🛡️
+                    </div>
+                    <h4 class="font-bold text-base text-white">Đăng nhập tài khoản Cán bộ</h4>
+                    <p class="text-xs text-slate-400">Dành cho trực ban và cán bộ Công an xã</p>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Mật khẩu cán bộ quản trị</label>
+                    <input type="password" id="adminPassInput" placeholder="Nhập mật khẩu (Mặc định: police123)" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white outline-none focus:border-blue-500">
+                    <p class="text-[11px] text-slate-500 mt-1 italic">* Tài khoản demo: <strong>police123</strong></p>
+                </div>
+                <button onclick="loginAdmin()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 rounded-xl text-sm transition">
+                    Đăng nhập quản trị
+                </button>
+            </div>
+
+            <!-- DASHBOARD CONTENT (WHEN LOGGED IN) -->
+            <div id="adminDashboard" class="hidden flex-1 flex flex-col overflow-hidden">
+                <!-- DASHBOARD TABS -->
+                <div class="bg-slate-900/80 border-b border-slate-700 px-4 py-2 flex gap-2 text-xs font-semibold overflow-x-auto">
+                    <button onclick="switchAdminTab('reports')" id="adm-tab-reports" class="px-3 py-1.5 rounded-lg bg-blue-600 text-white">
+                        📋 Danh sách tin báo (<span id="adminTotalBadge">0</span>)
+                    </button>
+                    <button onclick="switchAdminTab('stats')" id="adm-tab-stats" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white">
+                        📊 Dashboard thống kê
+                    </button>
+                    <button onclick="switchAdminTab('config')" id="adm-tab-config" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white">
+                        ⚙️ Cấu hình hệ thống
+                    </button>
+                    <button onclick="logoutAdmin()" class="ml-auto px-2.5 py-1.5 rounded-lg text-red-400 hover:bg-red-950/40">
+                        Đăng xuất
+                    </button>
+                </div>
+
+                <!-- ADMIN TAB 1: REPORTS LIST -->
+                <div id="adm-view-reports" class="flex-1 overflow-y-auto p-4 space-y-3">
+                    <!-- SEARCH & FILTER BAR -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 bg-slate-900/60 p-2.5 rounded-xl border border-slate-700 text-xs">
+                        <input type="text" id="admFilterKeyword" oninput="filterAdminReports()" placeholder="🔍 Tìm SĐT, mã, nội dung..." class="bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white outline-none">
+                        <select id="admFilterStatus" onchange="filterAdminReports()" class="bg-slate-800 border border-slate-700 rounded-lg px-2 py-1.5 text-white outline-none">
+                            <option value="">Tất cả trạng thái</option>
+                            <option value="Đã tiếp nhận">Đã tiếp nhận</option>
+                            <option value="Đang xác minh">Đang xác minh</option>
+                            <option value="Đã xử lý">Đã xử lý</option>
+                            <option value="Chuyển cấp có thẩm quyền">Chuyển cấp có thẩm quyền</option>
+                        </select>
+                        <select id="admFilterVillage" onchange="filterAdminReports()" class="bg-slate-800 border border-slate-700 rounded-lg px-2 py-1.5 text-white outline-none">
+                            <option value="">Tất cả thôn</option>
+                            <option value="Thôn 1">Thôn 1</option>
+                            <option value="Thôn 2">Thôn 2</option>
+                            <option value="Thôn 3">Thôn 3</option>
+                            <option value="Thôn 4">Thôn 4</option>
+                            <option value="Thôn 5">Thôn 5</option>
+                            <option value="Thôn 6">Thôn 6</option>
+                            <option value="Thôn 7">Thôn 7</option>
+                            <option value="Thôn 8">Thôn 8</option>
+                        </select>
+                    </div>
+
+                    <div class="flex items-center justify-between text-xs text-slate-400 px-1">
+                        <span>Kết quả lọc: <strong id="filterCount" class="text-white">0</strong> báo cáo</span>
+                        <div class="flex gap-2">
+                            <button onclick="exportToExcel()" class="bg-green-700 hover:bg-green-600 text-white px-2.5 py-1 rounded-lg flex items-center gap-1 font-semibold transition">
+                                📊 Xuất Excel/CSV
+                            </button>
+                            <button onclick="exportToJSON()" class="bg-slate-700 hover:bg-slate-600 text-white px-2 py-1 rounded-lg">
+                                💾 Sao lưu
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- REPORT CARDS CONTAINER -->
+                    <div id="adminReportsContainer" class="space-y-2.5"></div>
+                </div>
+
+                <!-- ADMIN TAB 2: STATISTICS DASHBOARD -->
+                <div id="adm-view-stats" class="hidden flex-1 overflow-y-auto p-4 space-y-4">
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                        <div class="bg-slate-900/80 border border-slate-700 p-3 rounded-xl">
+                            <p class="text-[11px] text-slate-400">Tổng số báo cáo</p>
+                            <p id="statTotal" class="text-2xl font-black text-white mt-0.5">0</p>
+                        </div>
+                        <div class="bg-slate-900/80 border border-blue-700/50 p-3 rounded-xl">
+                            <p class="text-[11px] text-blue-300">Báo cáo hôm nay</p>
+                            <p id="statToday" class="text-2xl font-black text-blue-400 mt-0.5">0</p>
+                        </div>
+                        <div class="bg-slate-900/80 border border-amber-700/50 p-3 rounded-xl">
+                            <p class="text-[11px] text-amber-300">Đang xác minh</p>
+                            <p id="statPending" class="text-2xl font-black text-amber-400 mt-0.5">0</p>
+                        </div>
+                        <div class="bg-slate-900/80 border border-green-700/50 p-3 rounded-xl">
+                            <p class="text-[11px] text-green-300">Đã xử lý</p>
+                            <p id="statResolved" class="text-2xl font-black text-green-400 mt-0.5">0</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-900/80 border border-slate-700 p-4 rounded-xl">
+                        <h4 class="font-bold text-xs text-slate-300 uppercase mb-3">Số vụ theo từng loại lừa đảo</h4>
+                        <div class="h-56 relative">
+                            <canvas id="chartFraudType"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-900/80 border border-slate-700 p-4 rounded-xl">
+                        <h4 class="font-bold text-xs text-slate-300 uppercase mb-3">Số vụ theo từng thôn (Xã Trà Liên)</h4>
+                        <div class="h-48 relative">
+                            <canvas id="chartVillage"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ADMIN TAB 3: SYSTEM CONFIG -->
+                <div id="adm-view-config" class="hidden flex-1 overflow-y-auto p-4 space-y-3 text-xs">
+                    <div class="bg-slate-900/70 border border-slate-700 p-4 rounded-xl space-y-3">
+                        <h4 class="font-bold text-sm text-blue-400 uppercase">Cấu hình thông tin Công an xã</h4>
+                        
+                        <div>
+                            <label class="block font-semibold text-slate-300 mb-1">Tên đơn vị</label>
+                            <input type="text" id="cfgUnitName" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white outline-none">
+                        </div>
+
+                        <div>
+                            <label class="block font-semibold text-slate-300 mb-1">Số điện thoại Hotline khẩn cấp (Nút gọi khẩn cấp sẽ kết nối số này)</label>
+                            <input type="text" id="cfgHotline" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono text-sm outline-none">
+                        </div>
+
+                        <div>
+                            <label class="block font-semibold text-slate-300 mb-1">Email của cán bộ trực tiếp tiếp nhận</label>
+                            <input type="email" id="cfgEmail" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white outline-none">
+                        </div>
+
+                        <div>
+                            <label class="block font-semibold text-slate-300 mb-1">Địa chỉ trụ sở Công an xã</label>
+                            <input type="text" id="cfgAddress" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white outline-none">
+                        </div>
+
+                        <div>
+                            <label class="block font-semibold text-slate-300 mb-1">Cán bộ / Trực ban phụ trách tiếp nhận</label>
+                            <input type="text" id="cfgOfficer" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white outline-none">
+                        </div>
+
+                        <div>
+                            <label class="block font-semibold text-slate-300 mb-1">API Endpoint tiếp nhận báo cáo (Tích hợp máy chủ cấp trên nếu có)</label>
+                            <input type="url" id="cfgApiEndpoint" placeholder="https://api.congan.gov.vn/reports (để trống nếu dùng nội bộ)" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono outline-none">
+                        </div>
+
+                        <button onclick="saveSystemConfig()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 rounded-xl text-xs transition mt-2">
+                            💾 Lưu cấu hình hệ thống
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DETAIL / ACTION MODAL FOR A SINGLE REPORT -->
+    <div id="reportDetailModal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-[60] hidden flex items-center justify-center p-3">
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl w-full max-w-lg max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+            <div class="bg-police-900 border-b border-police-700 px-4 py-3 flex items-center justify-between">
+                <div>
+                    <h3 class="font-bold text-sm text-white flex items-center gap-2">
+                        Chi tiết tin báo: <span id="dtlCode" class="font-mono text-amber-400">TL-...</span>
+                    </h3>
+                    <p id="dtlTime" class="text-[11px] text-slate-400">--:--</p>
+                </div>
+                <button onclick="closeReportDetailModal()" class="w-7 h-7 rounded-full bg-slate-700 hover:bg-slate-600 text-slate-300 flex items-center justify-center text-xs">
+                    ✕
+                </button>
+            </div>
+
+            <div class="flex-1 overflow-y-auto p-4 space-y-3 text-xs">
+                <div class="bg-slate-900/70 p-3 rounded-xl border border-slate-700 space-y-1">
+                    <p class="font-bold text-slate-300 uppercase text-[10px]">Người báo cáo</p>
+                    <p><span class="text-slate-400">Họ tên:</span> <strong id="dtlReporterName" class="text-white">--</strong></p>
+                    <p><span class="text-slate-400">Số điện thoại:</span> <span id="dtlReporterPhone" class="text-blue-300 font-mono">--</span></p>
+                    <p><span class="text-slate-400">Địa bàn thôn:</span> <span id="dtlReporterVillage" class="text-slate-200">--</span></p>
+                </div>
+
+                <div class="bg-slate-900/70 p-3 rounded-xl border border-slate-700 space-y-1">
+                    <p class="font-bold text-red-300 uppercase text-[10px]">Thông tin đối tượng nghi vấn</p>
+                    <p><span class="text-slate-400">Loại lừa đảo:</span> <strong id="dtlFraudType" class="text-amber-400">--</strong></p>
+                    <p><span class="text-slate-400">SĐT/Nick nghi vấn:</span> <span id="dtlSuspectPhone" class="text-red-300 font-mono">--</span></p>
+                    <p><span class="text-slate-400">Tài khoản nhận tiền:</span> <span id="dtlSuspectBank" class="text-red-300 font-mono">--</span></p>
+                    <p><span class="text-slate-400">Số tiền bị yêu cầu:</span> <span id="dtlAmount" class="text-white font-bold">--</span></p>
+                    <p><span class="text-slate-400">Link nghi vấn:</span> <a id="dtlSuspectLink" href="#" target="_blank" class="text-blue-400 underline break-all">--</a></p>
+                </div>
+
+                <div class="bg-slate-900/70 p-3 rounded-xl border border-slate-700 space-y-1">
+                    <p class="font-bold text-slate-300 uppercase text-[10px]">Mô tả vụ việc</p>
+                    <p id="dtlDescription" class="text-slate-200 leading-relaxed whitespace-pre-wrap">--</p>
+                </div>
+
+                <div id="dtlEvidenceSection" class="bg-slate-900/70 p-3 rounded-xl border border-slate-700 space-y-1">
+                    <p class="font-bold text-slate-300 uppercase text-[10px]">Bằng chứng đính kèm</p>
+                    <div id="dtlEvidenceImages" class="flex flex-wrap gap-2 mt-1"></div>
+                </div>
+
+                <div class="bg-blue-950/40 p-3 rounded-xl border border-blue-700/50 space-y-2">
+                    <p class="font-bold text-blue-300 uppercase text-[10px]">Xử lý của Cán bộ Công an</p>
+                    <div>
+                        <label class="block text-slate-300 mb-1">Cập nhật trạng thái:</label>
+                        <select id="dtlUpdateStatus" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white outline-none">
+                            <option value="Đã tiếp nhận">🔵 Đã tiếp nhận</option>
+                            <option value="Đang xác minh">🟡 Đang xác minh</option>
+                            <option value="Đã xử lý">🟢 Đã xử lý</option>
+                            <option value="Chuyển cấp có thẩm quyền">🟣 Chuyển cấp có thẩm quyền</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-slate-300 mb-1">Ghi chú của cán bộ tiếp nhận:</label>
+                        <textarea id="dtlOfficerNotes" rows="2" placeholder="Ghi nhận quá trình xác minh hoặc hướng xử lý..." class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-white outline-none resize-none"></textarea>
+                    </div>
+                    <button onclick="saveReportStatusUpdate()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 rounded-lg text-xs transition">
+                        Cập nhật hồ sơ
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CORE JAVASCRIPT LOGIC -->
+    <script>
+        const DEFAULT_CONFIG = {
+            unitName: "Công an xã Trà Liên",
+            hotline: "0914000000",
+            email: "congan.tralien@gmail.com",
+            address: "Thôn 2, xã Trà Liên, huyện Trà Bồng, tỉnh Quảng Ngãi",
+            officerName: "Đ/c Trưởng Công an xã",
+            apiEndpoint: ""
+        };
+
+        const WARNINGS = [
+            {
+                icon: "👮",
+                title: "Giả danh Công an, Viện kiểm sát",
+                desc: "Công an KHÔNG BAO GIỜ yêu cầu người dân chuyển tiền để 'xác minh tài khoản' hay 'bảo mật tiền'.",
+                example: "Ví dụ: Gọi điện dọa bạn liên quan vụ án rửa tiền, yêu cầu chuyển vào 'tài khoản cơ quan' để chứng minh → 100% lừa đảo!"
+            },
+            {
+                icon: "🔢",
+                title: "Lừa lấy mã xác thực OTP",
+                desc: "KHÔNG cung cấp mã OTP cho bất kỳ ai, kể cả nhân viên ngân hàng.",
+                example: "Ví dụ: Kẻ gian xưng là ngân hàng thông báo tài khoản có giao dịch lạ và đề nghị đọc OTP để hủy lệnh → Cung cấp là mất sạch tiền!"
+            },
+            {
+                icon: "🔗",
+                title: "Đường link lạ, website giả mạo",
+                desc: "KHÔNG bấm vào đường link lạ gửi qua tin nhắn SMS, Zalo, Messenger.",
+                example: "Ví dụ: Link nhận quà khuyến mãi, bình chọn hoa khôi nhí, link đổi điểm thưởng viễn thông... Đăng nhập vào sẽ bị mất nick hoặc mất tài khoản."
+            },
+            {
+                icon: "📲",
+                title: "Cài đặt ứng dụng không rõ nguồn gốc",
+                desc: "KHÔNG tải app từ link ngoài; chỉ cài từ CH Play (Android) hoặc App Store (iPhone).",
+                example: "Ví dụ: Yêu cầu cài app 'Dịch vụ công giả mạo', app 'Bộ Công an' chứa mã độc chiếm quyền điều khiển điện thoại và tự động chuyển tiền."
+            },
+            {
+                icon: "💸",
+                title: "Chuyển tiền khi chưa xác minh",
+                desc: "KHÔNG chuyển tiền khi chưa gọi điện thoại trực tiếp để nghe đúng giọng người quen.",
+                example: "Ví dụ: Zalo/Facebook người thân nhắn tin mượn tiền gấp do nick đã bị hack chiếm đoạt hoặc công nghệ giả giọng nói (Deepfake)."
+            },
+            {
+                icon: "📈",
+                title: "Mồi chài đầu tư lợi nhuận cao",
+                desc: "Cẩn trọng lời mời 'việc nhẹ lương cao', đầu tư chứng khoán ảo, nạp tiền làm nhiệm vụ.",
+                example: "Ví dụ: Ban đầu cho rút vài trăm nghìn làm tin, sau yêu cầu nạp tiền triệu, trăm triệu rồi khóa tài khoản không cho rút."
+            },
+            {
+                icon: "👤",
+                title: "Tài khoản giả mạo cán bộ, người quen",
+                desc: "Cẩn trọng các tài khoản mạng xã hội dùng ảnh đại diện Công an hoặc lãnh đạo địa phương.",
+                example: "Ví dụ: Dùng ảnh cán bộ xã kết bạn rồi nhắn tin nhờ chuyển tiền, hỗ trợ làm hồ sơ dịch vụ thu phí trái quy định."
+            }
+        ];
+
+        let currentTab = 'home';
+        let currentEvidenceFiles = [];
+        let systemConfig = JSON.parse(localStorage.getItem('traLienFraud_config') || 'null') || DEFAULT_CONFIG;
+        let reportsData = JSON.parse(localStorage.getItem('traLienFraud_reports') || 'null');
+        let selectedReportIdForDetail = null;
+        let isSpeaking = false;
+        let chartInstance1 = null;
+        let chartInstance2 = null;
+
+        if (!reportsData) {
+            reportsData = [
+                {
+                    id: "TL-20260901",
+                    isAnonymous: false,
+                    reporterName: "Nguyễn Thị Hoa",
+                    reporterPhone: "0905123456",
+                    reporterVillage: "Thôn 3",
+                    fraudType: "Giả danh Công an/cơ quan nhà nước",
+                    incidentTime: "2026-09-20T10:30",
+                    amountInvolved: 50000000,
+                    suspectPhone: "0988999888",
+                    suspectBankAccount: "987654321 - Vietcombank - NGUYEN VAN GIA",
+                    suspectLinks: "",
+                    description: "Có đối tượng tự xưng là cán bộ Công an điều tra, thông báo tôi có liên quan đến đường dây ma túy, yêu cầu tôi chuyển 50 triệu đồng vào tài khoản để giám định.",
+                    evidence: [],
+                    status: "Đã xử lý",
+                    officerNotes: "Cán bộ đã trực tiếp xuống nhà giải thích cho bà Hoa không chuyển tiền. Đã ngăn chặn kịp thời.",
+                    createdAt: "2026-09-20T11:00:00.000Z"
+                },
+                {
+                    id: "TL-20260902",
+                    isAnonymous: true,
+                    reporterName: "Ẩn danh",
+                    reporterPhone: "",
+                    reporterVillage: "Thôn 1",
+                    fraudType: "Lừa đảo việc làm",
+                    incidentTime: "2026-09-24T14:15",
+                    amountInvolved: 5000000,
+                    suspectPhone: "0345678901",
+                    suspectBankAccount: "123456789 - MBBank",
+                    suspectLinks: "https://facebook.com/tuyendung-online-quangngai",
+                    description: "Quảng cáo làm nhiệm vụ bấm like video TikTok kiếm 300k/ngày, nạp tiền 5 triệu vào thì bị khóa tài khoản và yêu cầu nạp thêm 20 triệu nữa mới cho rút.",
+                    evidence: [],
+                    status: "Đang xác minh",
+                    officerNotes: "Đang thu thập thông tin tài khoản ngân hàng thụ hưởng để phối hợp với ngân hàng phong tỏa.",
+                    createdAt: "2026-09-24T16:20:00.000Z"
+                }
+            ];
+            saveReports();
+        }
+
+        function saveReports() {
+            localStorage.setItem('traLienFraud_reports', JSON.stringify(reportsData));
+        }
+        function saveConfig() {
+            localStorage.setItem('traLienFraud_config', JSON.stringify(systemConfig));
+            syncConfigUI();
+        }
+
+        function syncConfigUI() {
+            const num = systemConfig.hotline || '0914000000';
+            const unit = systemConfig.unitName || 'Công an xã Trà Liên';
+
+            document.getElementById('headerUnitName').innerText = unit.toUpperCase();
+            document.getElementById('homeHotlineNum').innerText = num;
+            document.getElementById('homeCallBtn').href = 'tel:' + num;
+            document.getElementById('homeQuickCall').href = 'tel:' + num;
+            document.getElementById('floatingCallBtn').href = 'tel:' + num;
+            document.getElementById('succCallBtn').href = 'tel:' + num;
+
+            document.getElementById('cfgUnitName').value = systemConfig.unitName;
+            document.getElementById('cfgHotline').value = systemConfig.hotline;
+            document.getElementById('cfgEmail').value = systemConfig.email;
+            document.getElementById('cfgAddress').value = systemConfig.address;
+            document.getElementById('cfgOfficer').value = systemConfig.officerName;
+            document.getElementById('cfgApiEndpoint').value = systemConfig.apiEndpoint || '';
+        }
+
+        function switchTab(tabId) {
+            currentTab = tabId;
+            ['home', 'report', 'guide', 'history'].forEach(t => {
+                const el = document.getElementById('view-' + t);
+                const btn = document.getElementById('tab-' + t);
+                if (t === tabId) {
+                    el.classList.remove('hidden');
+                    btn.classList.add('bg-blue-600', 'text-white', 'shadow');
+                    btn.classList.remove('text-slate-400');
+                } else {
+                    el.classList.add('hidden');
+                    btn.classList.remove('bg-blue-600', 'text-white', 'shadow');
+                    btn.classList.add('text-slate-400');
+                }
+            });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            if (tabId === 'history') {
+                renderMyRecentReports();
+            }
+        }
+
+        function toggleAnonymousMode() {
+            const isAnon = document.getElementById('isAnonymous').checked;
+            const container = document.getElementById('reporterPersonalFields');
+            const nameInput = document.getElementById('reporterName');
+            const phoneInput = document.getElementById('reporterPhone');
+
+            if (isAnon) {
+                container.classList.add('opacity-40', 'pointer-events-none');
+                nameInput.required = false;
+                phoneInput.required = false;
+            } else {
+                container.classList.remove('opacity-40', 'pointer-events-none');
+            }
+        }
+
+        function handleEvidenceSelect(event) {
+            const files = Array.from(event.target.files);
+            if (!files.length) return;
+
+            files.forEach(file => {
+                if (currentEvidenceFiles.length >= 5) return;
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    currentEvidenceFiles.push({
+                        name: file.name,
+                        data: e.target.result
+                    });
+                    renderEvidencePreviews();
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function renderEvidencePreviews() {
+            const container = document.getElementById('evidencePreviewContainer');
+            container.innerHTML = '';
+            currentEvidenceFiles.forEach((file, index) => {
+                const div = document.createElement('div');
+                div.className = 'relative w-16 h-16 rounded-lg overflow-hidden border border-slate-600 group';
+                div.innerHTML = `
+                    <img src="${file.data}" class="w-full h-full object-cover">
+                    <button type="button" onclick="removeEvidence(${index})" class="absolute top-0 right-0 bg-red-600 text-white w-4 h-4 flex items-center justify-center text-[10px] rounded-bl">✕</button>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function removeEvidence(index) {
+            currentEvidenceFiles.splice(index, 1);
+            renderEvidencePreviews();
+        }
+
+        function handleFormSubmit(event) {
+            event.preventDefault();
+
+            const isAnon = document.getElementById('isAnonymous').checked;
+            const name = document.getElementById('reporterName').value.trim();
+            const phone = document.getElementById('reporterPhone').value.trim();
+
+            if (!isAnon && !name && !phone) {
+                alert('Vui lòng nhập họ tên hoặc số điện thoại, hoặc chọn báo cáo ẩn danh.');
+                return;
+            }
+
+            const code = 'TL-' + new Date().getFullYear() + Math.floor(100000 + Math.random() * 900000);
+            const now = new Date();
+
+            const newReport = {
+                id: code,
+                isAnonymous: isAnon,
+                reporterName: isAnon ? 'Ẩn danh' : (name || 'Không rõ'),
+                reporterPhone: isAnon ? '' : phone,
+                reporterVillage: document.getElementById('reporterVillage').value,
+                fraudType: document.getElementById('fraudType').value,
+                incidentTime: document.getElementById('incidentTime').value,
+                amountInvolved: Number(document.getElementById('amountInvolved').value) || 0,
+                suspectPhone: document.getElementById('suspectPhone').value.trim(),
+                suspectBankAccount: document.getElementById('suspectBankAccount').value.trim(),
+                suspectLinks: document.getElementById('suspectLinks').value.trim(),
+                description: document.getElementById('description').value.trim(),
+                evidence: [...currentEvidenceFiles],
+                status: 'Đã tiếp nhận',
+                officerNotes: '',
+                createdAt: now.toISOString()
+            };
+
+            reportsData.unshift(newReport);
+            saveReports();
+
+            if (systemConfig.apiEndpoint && systemConfig.apiEndpoint.trim() !== '') {
+                try {
+                    fetch(systemConfig.apiEndpoint, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(newReport)
+                    }).catch(e => console.log('Forwarding to external endpoint failed', e));
+                } catch(e) {}
+            }
+
+            document.getElementById('fraudReportForm').reset();
+            currentEvidenceFiles = [];
+            renderEvidencePreviews();
+            toggleAnonymousMode();
+
+            document.getElementById('succReportCode').innerText = newReport.id;
+            document.getElementById('succReportTime').innerText = now.toLocaleTimeString('vi-VN') + ' ' + now.toLocaleDateString('vi-VN');
+            document.getElementById('successModal').classList.remove('hidden');
+        }
+
+        function closeSuccessModal() {
+            document.getElementById('successModal').classList.add('hidden');
+            switchTab('history');
+        }
+
+        function renderMyRecentReports() {
+            const area = document.getElementById('searchResultArea');
+            if (reportsData.length === 0) {
+                area.innerHTML = '<p class="text-xs text-slate-500 text-center py-4">Chưa có tin báo nào trong hệ thống.</p>';
+                return;
+            }
+            let html = '<p class="text-xs font-bold text-slate-400 mb-1">Các tin báo gần đây nhất:</p>';
+            reportsData.slice(0, 3).forEach(r => {
+                const statusColor = r.status === 'Đã xử lý' ? 'text-green-400 bg-green-950/40 border-green-700/50' : 
+                                   (r.status === 'Đang xác minh' ? 'text-amber-400 bg-amber-950/40 border-amber-700/50' : 'text-blue-400 bg-blue-950/40 border-blue-700/50');
+                html += `
+                    <div class="bg-slate-800 border border-slate-700 p-3 rounded-xl space-y-1">
+                        <div class="flex items-center justify-between">
+                            <span class="font-mono font-bold text-xs text-amber-400">${r.id}</span>
+                            <span class="text-[10px] px-2 py-0.5 rounded-full border ${statusColor}">${r.status}</span>
+                        </div>
+                        <p class="text-xs font-semibold text-white">${r.fraudType}</p>
+                        <p class="text-[11px] text-slate-400 line-clamp-1">${r.description}</p>
+                    </div>
+                `;
+            });
+            area.innerHTML = html;
+        }
+
+        function searchMyReport() {
+            const q = document.getElementById('searchCodeInput').value.trim().toUpperCase();
+            const area = document.getElementById('searchResultArea');
+            if (!q) {
+                renderMyRecentReports();
+                return;
+            }
+            const found = reportsData.find(r => r.id === q);
+            if (!found) {
+                area.innerHTML = `
+                    <div class="bg-slate-800 border border-red-500/40 p-4 rounded-xl text-center text-xs text-red-300">
+                        Không tìm thấy báo cáo nào có mã <strong>${q}</strong>. Vui lòng kiểm tra lại.
+                    </div>
+                `;
+                return;
+            }
+            const statusColor = found.status === 'Đã xử lý' ? 'text-green-400 bg-green-950/40 border-green-700/50' : 
+                               (found.status === 'Đang xác minh' ? 'text-amber-400 bg-amber-950/40 border-amber-700/50' : 'text-blue-400 bg-blue-950/40 border-blue-700/50');
+            area.innerHTML = `
+                <div class="bg-slate-800 border border-blue-500/40 p-4 rounded-2xl space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="font-mono font-bold text-sm text-amber-400">${found.id}</span>
+                        <span class="text-xs px-2.5 py-0.5 rounded-full border ${statusColor}">${found.status}</span>
+                    </div>
+                    <p class="text-xs text-slate-400">Thời gian tiếp nhận: ${new Date(found.createdAt).toLocaleString('vi-VN')}</p>
+                    <p class="text-xs font-bold text-white">Hình thức: ${found.fraudType}</p>
+                    <p class="text-xs text-slate-300">Mô tả: ${found.description}</p>
+                    ${found.officerNotes ? `<div class="bg-blue-950/50 p-2.5 rounded-xl border border-blue-800 text-xs text-blue-200"><strong>Ghi chú xử lý từ Công an xã:</strong> ${found.officerNotes}</div>` : ''}
+                </div>
+            `;
+        }
+
+        function renderWarningCards() {
+            const container = document.getElementById('warningCardsList');
+            container.innerHTML = '';
+            WARNINGS.forEach((w, idx) => {
+                const card = document.createElement('div');
+                card.className = 'bg-slate-800/80 border border-slate-700 rounded-2xl p-4 space-y-2';
+                card.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <span class="text-3xl">${w.icon}</span>
+                        <div>
+                            <span class="text-[10px] font-bold text-red-400 uppercase tracking-wider">Cảnh báo ${idx + 1}</span>
+                            <h4 class="font-bold text-sm text-white">${w.title}</h4>
+                        </div>
+                    </div>
+                    <p class="text-xs text-slate-300 font-medium leading-relaxed">${w.desc}</p>
+                    <div class="bg-slate-900/80 p-2.5 rounded-xl border border-slate-700/60 text-xs text-slate-400">
+                        <span class="text-amber-400 font-bold">💡 Ví dụ thực tế:</span> ${w.example}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function shareSocial(type) {
+            const text = "⚠️ CẢNH BÁO LỪA ĐẢO – XÃ TRÀ LIÊN: Hãy nâng cao cảnh giác với các chiêu trò giả danh Công an, lừa OTP, link lạ. Báo cáo ngay Công an xã Trà Liên tại ứng dụng này!";
+            const url = window.location.href;
+            if (type === 'facebook') {
+                window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(text)}`, '_blank');
+            } else if (type === 'zalo') {
+                window.open(`https://zalo.me/share?url=${encodeURIComponent(url)}`, '_blank');
+            }
+        }
+
+        function copyWarningText() {
+            const text = `⚠️ CẢNH BÁO LỪA ĐẢO TỪ CÔNG AN XÃ TRÀ LIÊN\n\n1. Công an KHÔNG yêu cầu chuyển tiền qua điện thoại để xác minh.\n2. Tuyệt đối KHÔNG cung cấp mã OTP cho bất kỳ ai.\n3. KHÔNG bấm vào đường link lạ gửi qua Zalo, SMS, Facebook.\n4. Nghi ngờ lừa đảo → Báo ngay Công an xã: ${systemConfig.hotline}`;
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = document.getElementById('copyBtnText');
+                btn.innerText = '✅ Đã sao chép nội dung!';
+                setTimeout(() => { btn.innerText = 'Sao chép nội dung cảnh báo'; }, 2000);
+            });
+        }
+
+        function toggleVoiceGuide() {
+            if (!('speechSynthesis' in window)) {
+                alert('Trình duyệt của bạn chưa hỗ trợ chức năng đọc giọng nói tự động.');
+                return;
+            }
+            if (isSpeaking) {
+                window.speechSynthesis.cancel();
+                isSpeaking = false;
+                document.getElementById('voiceBtnText').innerText = '🔊 Bấm để nghe hướng dẫn bằng giọng nói';
+                document.getElementById('voiceBtn').classList.remove('bg-red-500', 'text-white');
+                document.getElementById('voiceBtn').classList.add('bg-yellow-400', 'text-slate-900');
+                return;
+            }
+
+            const speechText = `Chào bà con nhân dân xã Trà Liên. Đây là đường dây nóng báo cáo tội phạm lừa đảo của Công an xã Trà Liên. Nếu bà con nhận được cuộc gọi mạo danh Công an, yêu cầu chuyển tiền, đòi mã ô tê pê, hoặc vay tiền online, hãy bấm nút Báo Cáo Ngay màu đỏ trên màn hình hoặc gọi ngay số điện thoại khẩn cấp của trực ban Công an xã. Tuyệt đối không chuyển tiền cho người lạ!`;
+            
+            const utter = new SpeechSynthesisUtterance(speechText);
+            utter.lang = 'vi-VN';
+            utter.rate = 0.9;
+
+            const voices = window.speechSynthesis.getVoices();
+            const vnVoice = voices.find(v => v.lang.includes('vi') || v.lang.includes('VI'));
+            if (vnVoice) utter.voice = vnVoice;
+
+            utter.onend = () => {
+                isSpeaking = false;
+                document.getElementById('voiceBtnText').innerText = '🔊 Bấm để nghe hướng dẫn bằng giọng nói';
+                document.getElementById('voiceBtn').classList.remove('bg-red-500', 'text-white');
+                document.getElementById('voiceBtn').classList.add('bg-yellow-400', 'text-slate-900');
+            };
+
+            window.speechSynthesis.cancel();
+            window.speechSynthesis.speak(utter);
+            isSpeaking = true;
+            document.getElementById('voiceBtnText').innerText = '⏹ Đang đọc... Bấm để dừng';
+            document.getElementById('voiceBtn').classList.remove('bg-yellow-400', 'text-slate-900');
+            document.getElementById('voiceBtn').classList.add('bg-red-500', 'text-white');
+        }
+
+        function openAdminModal() {
+            document.getElementById('adminModal').classList.remove('hidden');
+            document.body.classList.add('modal-active');
+            lucide.createIcons();
+        }
+
+        function closeAdminModal() {
+            document.getElementById('adminModal').classList.add('hidden');
+            document.body.classList.remove('modal-active');
+        }
+
+        function loginAdmin() {
+            const pass = document.getElementById('adminPassInput').value;
+            if (pass === 'police123' || pass === 'admin123') {
+                document.getElementById('adminLoginForm').classList.add('hidden');
+                document.getElementById('adminDashboard').classList.remove('hidden');
+                document.getElementById('adminBtnText').innerText = 'Quản trị (Đã bật)';
+                renderAdminReports();
+                renderAdminStats();
+                lucide.createIcons();
+            } else {
+                alert('Mật khẩu quản trị chưa đúng. Mật khẩu mặc định là: police123');
+            }
+        }
+
+        function logoutAdmin() {
+            document.getElementById('adminLoginForm').classList.remove('hidden');
+            document.getElementById('adminDashboard').classList.add('hidden');
+            document.getElementById('adminPassInput').value = '';
+            document.getElementById('adminBtnText').innerText = 'Cán bộ';
+        }
+
+        function switchAdminTab(tab) {
+            ['reports', 'stats', 'config'].forEach(t => {
+                const el = document.getElementById('adm-view-' + t);
+                const btn = document.getElementById('adm-tab-' + t);
+                if (t === tab) {
+                    el.classList.remove('hidden');
+                    btn.classList.add('bg-blue-600', 'text-white');
+                    btn.classList.remove('text-slate-400');
+                } else {
+                    el.classList.add('hidden');
+                    btn.classList.remove('bg-blue-600', 'text-white');
+                    btn.classList.add('text-slate-400');
+                }
+            });
+            if (tab === 'stats') renderAdminStats();
+            lucide.createIcons();
+        }
+
+        function renderAdminReports(filtered = null) {
+            const list = filtered || reportsData;
+            const container = document.getElementById('adminReportsContainer');
+            document.getElementById('adminTotalBadge').innerText = reportsData.length;
+            document.getElementById('filterCount').innerText = list.length;
+
+            if (list.length === 0) {
+                container.innerHTML = '<p class="text-xs text-slate-500 text-center py-8">Không có báo cáo nào khớp với bộ lọc.</p>';
+                return;
+            }
+
+            let html = '';
+            list.forEach(r => {
+                const statusColor = r.status === 'Đã xử lý' ? 'bg-green-900/60 text-green-300 border-green-700' :
+                                   (r.status === 'Đang xác minh' ? 'bg-amber-900/60 text-amber-300 border-amber-700' : 
+                                   (r.status === 'Chuyển cấp có thẩm quyền' ? 'bg-purple-900/60 text-purple-300 border-purple-700' : 'bg-blue-900/60 text-blue-300 border-blue-700'));
+                
+                const timeStr = new Date(r.createdAt).toLocaleString('vi-VN');
+                const amountStr = r.amountInvolved ? Number(r.amountInvolved).toLocaleString('vi-VN') + ' đ' : 'Không có';
+
+                html += `
+                    <div class="bg-slate-900/80 border border-slate-700 hover:border-blue-500/50 p-3 rounded-xl transition space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="font-mono font-bold text-xs text-amber-400">${r.id}</span>
+                            <span class="text-[10px] px-2 py-0.5 rounded-full border ${statusColor} font-semibold">${r.status}</span>
+                        </div>
+                        <div class="text-xs">
+                            <p class="font-bold text-white text-sm">${r.fraudType}</p>
+                            <p class="text-slate-400">Người báo: <strong class="text-slate-200">${r.reporterName}</strong> ${r.reporterPhone ? `(${r.reporterPhone})` : ''} - <span>${r.reporterVillage || 'Không rõ thôn'}</span></p>
+                            <p class="text-slate-400">Số tiền thiệt hại/yêu cầu: <span class="text-red-400 font-bold">${amountStr}</span></p>
+                            <p class="text-slate-300 line-clamp-2 mt-1 bg-slate-950/40 p-2 rounded-lg border border-slate-800 text-[11px]">${r.description}</p>
+                        </div>
+                        <div class="flex items-center justify-between pt-1 border-t border-slate-800 text-[11px]">
+                            <span class="text-slate-500">${timeStr}</span>
+                            <button onclick="openReportDetail('${r.id}')" class="bg-blue-600 hover:bg-blue-500 text-white font-semibold px-3 py-1 rounded-lg transition flex items-center gap-1">
+                                👁️ Xem chi tiết & Xử lý
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function filterAdminReports() {
+            const kw = document.getElementById('admFilterKeyword').value.toLowerCase().trim();
+            const status = document.getElementById('admFilterStatus').value;
+            const village = document.getElementById('admFilterVillage').value;
+
+            const filtered = reportsData.filter(r => {
+                const matchKw = !kw || r.id.toLowerCase().includes(kw) || 
+                                (r.reporterPhone && r.reporterPhone.includes(kw)) ||
+                                (r.suspectPhone && r.suspectPhone.includes(kw)) ||
+                                (r.description && r.description.toLowerCase().includes(kw));
+                const matchStatus = !status || r.status === status;
+                const matchVillage = !village || r.reporterVillage === village;
+                return matchKw && matchStatus && matchVillage;
+            });
+            renderAdminReports(filtered);
+        }
+
+        function openReportDetail(reportId) {
+            const r = reportsData.find(item => item.id === reportId);
+            if (!r) return;
+
+            selectedReportIdForDetail = reportId;
+            document.getElementById('dtlCode').innerText = r.id;
+            document.getElementById('dtlTime').innerText = new Date(r.createdAt).toLocaleString('vi-VN');
+            document.getElementById('dtlReporterName').innerText = r.reporterName;
+            document.getElementById('dtlReporterPhone').innerText = r.reporterPhone || 'Không cung cấp (Báo cáo ẩn danh)';
+            document.getElementById('dtlReporterVillage').innerText = r.reporterVillage || 'Không rõ';
+            
+            document.getElementById('dtlFraudType').innerText = r.fraudType;
+            document.getElementById('dtlSuspectPhone').innerText = r.suspectPhone || 'Không có';
+            document.getElementById('dtlSuspectBank').innerText = r.suspectBankAccount || 'Không có';
+            document.getElementById('dtlAmount').innerText = r.amountInvolved ? Number(r.amountInvolved).toLocaleString('vi-VN') + ' VNĐ' : 'Chưa xác định';
+            
+            const linkEl = document.getElementById('dtlSuspectLink');
+            if (r.suspectLinks) {
+                linkEl.href = r.suspectLinks;
+                linkEl.innerText = r.suspectLinks;
+            } else {
+                linkEl.innerText = 'Không có';
+                linkEl.removeAttribute('href');
+            }
+
+            document.getElementById('dtlDescription').innerText = r.description;
+            
+            const evContainer = document.getElementById('dtlEvidenceImages');
+            evContainer.innerHTML = '';
+            if (r.evidence && r.evidence.length > 0) {
+                r.evidence.forEach(ev => {
+                    const img = document.createElement('img');
+                    img.src = ev.data;
+                    img.className = 'w-20 h-20 object-cover rounded-lg border border-slate-600 cursor-pointer hover:scale-105 transition';
+                    img.onclick = () => window.open(ev.data, '_blank');
+                    evContainer.appendChild(img);
+                });
+            } else {
+                evContainer.innerHTML = '<span class="text-slate-500 italic">Không có bằng chứng ảnh đính kèm</span>';
+            }
+
+            document.getElementById('dtlUpdateStatus').value = r.status;
+            document.getElementById('dtlOfficerNotes').value = r.officerNotes || '';
+
+            document.getElementById('reportDetailModal').classList.remove('hidden');
+        }
+
+        function closeReportDetailModal() {
+            document.getElementById('reportDetailModal').classList.add('hidden');
+            selectedReportIdForDetail = null;
+        }
+
+        function saveReportStatusUpdate() {
+            if (!selectedReportIdForDetail) return;
+            const r = reportsData.find(item => item.id === selectedReportIdForDetail);
+            if (!r) return;
+
+            r.status = document.getElementById('dtlUpdateStatus').value;
+            r.officerNotes = document.getElementById('dtlOfficerNotes').value.trim();
+            saveReports();
+            renderAdminReports();
+            closeReportDetailModal();
+            alert('Đã cập nhật trạng thái và ghi chú xử lý thành công!');
+        }
+
+        function renderAdminStats() {
+            const total = reportsData.length;
+            const today = new Date().toISOString().slice(0, 10);
+            const todayCount = reportsData.filter(r => r.createdAt && r.createdAt.slice(0, 10) === today).length;
+            const pendingCount = reportsData.filter(r => r.status === 'Đang xác minh').length;
+            const resolvedCount = reportsData.filter(r => r.status === 'Đã xử lý').length;
+
+            document.getElementById('statTotal').innerText = total;
+            document.getElementById('statToday').innerText = todayCount;
+            document.getElementById('statPending').innerText = pendingCount;
+            document.getElementById('statResolved').innerText = resolvedCount;
+
+            const typeMap = {};
+            reportsData.forEach(r => {
+                typeMap[r.fraudType] = (typeMap[r.fraudType] || 0) + 1;
+            });
+            const typeLabels = Object.keys(typeMap);
+            const typeCounts = Object.values(typeMap);
+
+            if (chartInstance1) chartInstance1.destroy();
+            const ctx1 = document.getElementById('chartFraudType').getContext('2d');
+            chartInstance1 = new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: typeLabels.length ? typeLabels : ['Chưa có'],
+                    datasets: [{
+                        label: 'Số vụ',
+                        data: typeCounts.length ? typeCounts : [0],
+                        backgroundColor: '#3b82f6',
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, ticks: { color: '#94a3b8', stepSize: 1 } },
+                        x: { ticks: { color: '#94a3b8', font: { size: 10 } } }
+                    }
+                }
+            });
+
+            const villageMap = {};
+            reportsData.forEach(r => {
+                const v = r.reporterVillage || 'Chưa rõ thôn';
+                villageMap[v] = (villageMap[v] || 0) + 1;
+            });
+            const villageLabels = Object.keys(villageMap);
+            const villageCounts = Object.values(villageMap);
+
+            if (chartInstance2) chartInstance2.destroy();
+            const ctx2 = document.getElementById('chartVillage').getContext('2d');
+            chartInstance2 = new Chart(ctx2, {
+                type: 'doughnut',
+                data: {
+                    labels: villageLabels.length ? villageLabels : ['Chưa có'],
+                    datasets: [{
+                        data: villageCounts.length ? villageCounts : [1],
+                        backgroundColor: ['#ef4444', '#f59e0b', '#10b981', '#6366f1', '#ec4899', '#06b6d4', '#8b5cf6', '#64748b']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'right', labels: { color: '#cbd5e1', font: { size: 10 } } }
+                    }
+                }
+            });
+        }
+
+        function exportToExcel() {
+            if (reportsData.length === 0) {
+                alert('Chưa có dữ liệu để xuất file.');
+                return;
+            }
+            const headers = ["Mã báo cáo", "Thời gian tiếp nhận", "Người báo", "Số điện thoại", "Thôn", "Loại lừa đảo", "Số tiền (VNĐ)", "SĐT nghi vấn", "TK ngân hàng nghi vấn", "Mô tả vụ việc", "Trạng thái", "Ghi chú của Cán bộ"];
+            const rows = reportsData.map(r => [
+                r.id,
+                new Date(r.createdAt).toLocaleString('vi-VN'),
+                r.reporterName || 'Ẩn danh',
+                r.reporterPhone || '',
+                r.reporterVillage || '',
+                r.fraudType,
+                r.amountInvolved || 0,
+                r.suspectPhone || '',
+                r.suspectBankAccount || '',
+                (r.description || '').replace(/\n/g, ' '),
+                r.status,
+                (r.officerNotes || '').replace(/\n/g, ' ')
+            ]);
+
+            const csvContent = "\uFEFF" + [headers, ...rows].map(e => e.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(",")).join("\r\n");
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.setAttribute("href", url);
+            a.setAttribute("download", `BaoCao_LuaDao_TraLien_${new Date().toISOString().slice(0,10)}.csv`);
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        function exportToJSON() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(reportsData, null, 2));
+            const a = document.createElement("a");
+            a.setAttribute("href", dataStr);
+            a.setAttribute("download", `Backup_TraLien_Fraud_${Date.now()}.json`);
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        function saveSystemConfig() {
+            systemConfig.unitName = document.getElementById('cfgUnitName').value.trim();
+            systemConfig.hotline = document.getElementById('cfgHotline').value.trim();
+            systemConfig.email = document.getElementById('cfgEmail').value.trim();
+            systemConfig.address = document.getElementById('cfgAddress').value.trim();
+            systemConfig.officerName = document.getElementById('cfgOfficer').value.trim();
+            systemConfig.apiEndpoint = document.getElementById('cfgApiEndpoint').value.trim();
+
+            saveConfig();
+            alert('Đã cập nhật cấu hình hệ thống thành công! Nút gọi khẩn cấp và các thông tin đã được đồng bộ.');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            syncConfigUI();
+            renderWarningCards();
+            lucide.createIcons();
+        });
+    </script>
+</body>
+</html>
